@@ -1,0 +1,208 @@
+:root {
+  --bg: #1e1e2e;
+  --panel: #2a2a40;
+  --accent: #c9188f;
+  --highlight: #7209b7;
+  --text: #ffffff;
+  --light-text: #aaaaaa;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.container {
+  background: var(--panel);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  max-width: 700px;
+  width: 95%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+h1 {
+  text-align: center;
+  color: var(--accent);
+}
+
+.note-selector {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.note-selector input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 2px solid var(--highlight);
+  border-radius: 10px;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.note-selector button {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.note-selector button:hover {
+  background: #a10c6d;
+}
+
+.notes-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.notes-list button {
+  background: var(--highlight);
+  border: none;
+  border-radius: 8px;
+  padding: 0.4rem 1rem;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.notes-list button.active {
+  background: var(--accent);
+}
+
+textarea {
+  width: 100%;
+  height: 250px;
+  padding: 1rem;
+  background-color: #1c1c2b;
+  border: 2px solid var(--highlight);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+button.save, button.clear {
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: white;
+}
+
+button.save {
+  background-color: var(--accent);
+}
+
+button.save:hover {
+  background-color: #a10c6d;
+}
+
+button.clear {
+  background-color: #ff4d6d;
+}
+
+button.clear:hover {
+  background-color: #c9184a;
+}
+
+@media (max-width: 500px) {
+  textarea {
+    height: 180px;
+  }
+
+  .buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .note-selector {
+    flex-direction: column;
+  }
+}
+
+textarea[style*="display: none"],
+button[style*="display: none"] {
+  display: none !important;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(30, 30, 46, 0.6);
+  backdrop-filter: blur(6px);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background-color: var(--panel);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.4);
+  text-align: center;
+}
+
+.modal-box p {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.modal-buttons button {
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  color: white;
+}
+
+.modal-buttons .confirm {
+  background-color: #ff4d6d;
+}
+
+.modal-buttons .confirm:hover {
+  background-color: #c9184a;
+}
+
+.modal-buttons .cancel {
+  background-color: var(--highlight);
+}
+
+.modal-buttons .cancel:hover {
+  background-color: #5a0ea1;
+}

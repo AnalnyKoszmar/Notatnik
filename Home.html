@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Magiczny Notatnik</title>
+  <link rel="stylesheet" href="Style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="Icon.png" type="image/png">
+</head>
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal-box">
+    <p>Na pewno chcesz usunąć tę notatkę?</p>
+    <div class="modal-buttons">
+      <button class="confirm" onclick="confirmDelete()">🗑️ Usuń</button>
+      <button class="cancel" onclick="closeModal()">↩️ Cofnij</button>
+    </div>
+  </div>
+</div>
+<body>
+  <div class="container">
+    <h1>🌙 Magiczny Notatnik</h1>
+
+    <div class="note-selector">
+      <input type="text" id="noteTitle" placeholder="Nazwa notatki..." />
+      <button onclick="createNote()">➕ Nowa notatka</button>
+    </div>
+
+    <div class="notes-list" id="notesList"></div>
+
+    <textarea id="noteContent" placeholder="Zaznacz notatkę lub stwórz nową..." disabled></textarea>
+
+    <div class="buttons">
+      <button class="save" onclick="saveNote()" disabled id="saveBtn">💾 Zapisz</button>
+      <button class="clear" onclick="deleteNote()" disabled id="deleteBtn">🗑️ Usuń</button>
+    </div>
+  </div>
+
+  <script src="Main.js"></script>
+</body>
+</html>
