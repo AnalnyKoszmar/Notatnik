@@ -1,89 +1,87 @@
-let currentNote = null;
-const notesList = document.getElementById('notesList');
-const noteTitle = document.getElementById('noteTitle');
-const noteContent = document.getElementById('noteContent');
-const saveBtn = document.getElementById('saveBtn');
-const deleteBtn = document.getElementById('deleteBtn');
+// Inicjalizacja elementów DOM
+const noteNameInput = document.getElementById('note-name');
+const noteContent = document.getElementById('note-content');
+const saveButton = document.getElementById('save-btn');
+const notesList = document.getElementById('notes-list');
+const deleteButton = document.getElementById('delete-btn');
+const cancelDeleteButton = document.getElementById('cancel-delete-btn');
+const deleteConfirmModal = document.getElementById('delete-confirm-modal');
 
-function loadNotes() {
-  notesList.innerHTML = '';
-  const notes = JSON.parse(localStorage.getItem('notes')) || {};
+let noteToDelete = null;
 
-  for (const key in notes) {
-    const btn = document.createElement('button');
-    btn.textContent = key;
-    btn.onclick = () => selectNote(key);
-    if (key === currentNote) btn.classList.add('active');
-    notesList.appendChild(btn);
-  }
+// Funkcja do zapisu notatki do Firebase
+function saveNote() {
+  const name = noteNameInput.value.trim();
+  const content = noteContent.value;
 
-  updateEditorVisibility();
-}
-
-function createNote() {
-  const title = noteTitle.value.trim();
-  if (!title) return;
-
-  const notes = JSON.parse(localStorage.getItem('notes')) || {};
-  if (notes[title]) {
-    alert('Notatka o takiej nazwie już istnieje!');
+  if (!name) {
+    alert('Podaj nazwę notatki');
     return;
   }
 
-  notes[title] = '';
-  localStorage.setItem('notes', JSON.stringify(notes));
-  currentNote = title;
-  noteTitle.value = '';
-  noteContent.value = '';
-  loadNotes();
+  firebase.database().ref('notes/' + name).set({
+    content: content
+  });
 }
 
-function selectNote(title) {
-  const notes = JSON.parse(localStorage.getItem('notes')) || {};
-  currentNote = title;
-  noteContent.value = notes[title];
-  updateEditorVisibility();
-  loadNotes();
-}
-
-function saveNote() {
-  if (!currentNote) return;
-  const notes = JSON.parse(localStorage.getItem('notes')) || {};
-  notes[currentNote] = noteContent.value;
-  localStorage.setItem('notes', JSON.stringify(notes));
-}
-
+// Funkcja do usuwania notatki z Firebase
 function deleteNote() {
-  if (!currentNote) return;
-  const modal = document.getElementById('modalOverlay');
-  modal.style.display = 'flex';
+  if (!noteToDelete) return;
+
+  firebase.database().ref('notes/' + noteToDelete).remove();
+  noteToDelete = null;
+  hideDeleteConfirm();
+  clearNoteEditor();
 }
 
-function closeModal() {
-  const modal = document.getElementById('modalOverlay');
-  modal.style.display = 'none';
+// Funkcja do wyświetlania modala z potwierdzeniem usunięcia
+function showDeleteConfirm(noteName) {
+  noteToDelete = noteName;
+  deleteConfirmModal.style.display = 'flex';
+  // Dodaj rozmycie tła, jeśli chcesz, np. przez klasę CSS
+  document.body.classList.add('blurred-background');
 }
 
-function confirmDelete() {
-  const notes = JSON.parse(localStorage.getItem('notes')) || {};
-  delete notes[currentNote];
-  localStorage.setItem('notes', JSON.stringify(notes));
+// Funkcja do ukrywania modala
+function hideDeleteConfirm() {
+  deleteConfirmModal.style.display = 'none';
+  document.body.classList.remove('blurred-background');
+}
 
-  currentNote = null;
+// Czyszczenie pola edycji notatki
+function clearNoteEditor() {
+  noteNameInput.value = '';
   noteContent.value = '';
-  updateEditorVisibility();
-  loadNotes();
-  closeModal();
 }
 
-function updateEditorVisibility() {
-  const visible = !!currentNote;
-  noteContent.style.display = visible ? 'block' : 'none';
-  saveBtn.style.display = visible ? 'inline-block' : 'none';
-  deleteBtn.style.display = visible ? 'inline-block' : 'none';
-  noteContent.disabled = !visible;
-  saveBtn.disabled = !visible;
-  deleteBtn.disabled = !visible;
-}
+// Nasłuch na kliknięcie zapisu
+saveButton.addEventListener('click', saveNote);
 
-loadNotes();
+// Nasłuch na kliknięcie usuwania — wyświetla modal
+deleteButton.addEventListener('click', () => {
+  const name = noteNameInput.value.trim();
+  if (!name) return;
+  showDeleteConfirm(name);
+});
+
+// Nasłuch na kliknięcie anulowania usuwania
+cancelDeleteButton.addEventListener('click', hideDeleteConfirm);
+
+// Nasłuch na potwierdzenie usunięcia
+document.getElementById('confirm-delete-btn').addEventListener('click', deleteNote);
+
+// Nasłuchujemy zmian w Firebase i aktualizujemy listę notatek na stronie
+firebase.database().ref('notes').on('value', (snapshot) => {
+  const notes = snapshot.val() || {};
+  notesList.innerHTML = '';
+
+  for (let key in notes) {
+    const li = document.createElement('li');
+    li.textContent = key;
+    li.addEventListener('click', () => {
+      noteNameInput.value = key;
+      noteContent.value = notes[key].content;
+    });
+    notesList.appendChild(li);
+  }
+});
